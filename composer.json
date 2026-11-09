@@ -1,0 +1,80 @@
+{
+    "name": "sayamaapps/kirby-monban",
+    "description": "Spam protection for forms in Kirby CMS 5: proof of work (ALTCHA), decoy field, time check and rate limit, all served from your own server.",
+    "license": "MIT",
+    "type": "kirby-plugin",
+    "keywords": [
+        "kirby",
+        "kirby-plugin",
+        "kirby-5",
+        "spam",
+        "captcha",
+        "altcha",
+        "proof-of-work",
+        "honeypot",
+        "forms",
+        "privacy",
+        "csp"
+    ],
+    "authors": [
+        {
+            "name": "Simon Räder",
+            "homepage": "https://sayamaapps.de"
+        }
+    ],
+    "homepage": "https://github.com/sayamaapps/kirby-monban",
+    "support": {
+        "issues": "https://github.com/sayamaapps/kirby-monban/issues",
+        "source": "https://github.com/sayamaapps/kirby-monban"
+    },
+    "require": {
+        "php": "^8.2",
+        "altcha-org/altcha": "^2.3",
+        "getkirby/composer-installer": "^1.2"
+    },
+    "require-dev": {
+        "ergebnis/composer-normalize": "2.54.0",
+        "getkirby/cms": "^5.0",
+        "icanhazstring/composer-unused": "0.9.7",
+        "maglnet/composer-require-checker": "4.17.0",
+        "phpmd/phpmd": "2.15.0",
+        "phpunit/phpunit": "11.5.55",
+        "vimeo/psalm": "6.20.1"
+    },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true,
+            "getkirby/composer-installer": true
+        },
+        "optimize-autoloader": true,
+        "platform": {
+            "php": "8.2.27"
+        },
+        "sort-packages": true
+    },
+    "extra": {
+        "installer-name": "monban",
+        "kirby": {
+            "compatible": "^5.0"
+        },
+        "kirby-cms-path": false
+    },
+    "scripts": {
+        "analyze:phpmd": "vendor/bin/phpmd src,index.php,autoload.php github phpmd.xml.dist",
+        "analyze:psalm": "vendor/bin/psalm",
+        "analyze:require-checker": "vendor/bin/composer-require-checker check --config-file=.github/composer-require-checker.json composer.json",
+        "analyze:unused": "vendor/bin/composer-unused --configuration=.github/composer-unused.php",
+        "ci": [
+            "@composer validate --strict --no-check-version --no-check-all",
+            "@normalize:check",
+            "@analyze:require-checker",
+            "@analyze:unused",
+            "@composer check-platform-reqs",
+            "@analyze:psalm",
+            "@analyze:phpmd",
+            "@test"
+        ],
+        "normalize:check": "@composer normalize --dry-run",
+        "test": "vendor/bin/phpunit"
+    }
+}

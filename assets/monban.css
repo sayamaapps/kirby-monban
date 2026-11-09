@@ -1,0 +1,12 @@
+/*
+ * Monban: the decoy field sits off screen. Not display:none and not the
+ * hidden attribute: bots skip fields hidden that way and fill the rest.
+ */
+.monban-decoy {
+	position: absolute !important;
+	left: -10000px;
+	top: auto;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}
