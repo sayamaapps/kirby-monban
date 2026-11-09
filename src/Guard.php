@@ -116,7 +116,7 @@ class Guard
 	}
 
 	/**
-	 * The <link> tags and the <script> for the widget, once per page: the first
+	 * The <link> tags and the script tag for the widget, once per page: the first
 	 * call prints them, later ones print nothing. External files only, so a
 	 * Content Security Policy needs no 'unsafe-inline'. The script tag carries
 	 * the URLs of the widget, the workers and the labels as data attributes. `style` or `script`
