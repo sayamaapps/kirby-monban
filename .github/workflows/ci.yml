@@ -177,6 +177,13 @@ jobs:
             echo "::error::monban.js must not set inline styles (CSP: style-src self)"; exit 1
           fi
 
+      # Static checks of sites read src/ too: every script tag must show its src, no <script in comments.
+      - name: Every script tag names its src
+        run: |
+          if grep -n '<script' src/*.php assets/monban.js | grep -v '<script src='; then
+            echo "::error::a script tag without a visible src attribute"; exit 1
+          fi
+
       # The ALTCHA build in assets/ must be the external one: styles and workers as files, nothing injected.
       - name: ALTCHA build without style injection and without blob workers
         run: |

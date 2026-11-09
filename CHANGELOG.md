@@ -10,6 +10,12 @@ All notable changes to this project are documented here. Versions follow
 - **A change to the bundled ALTCHA widget** is listed under "Widget" with its
   version.
 
+## [1.0.2] — 2026-11-09
+
+### Fixed
+
+- The script tag writes `src` out in the PHP source, so a static check for embedded scripts (one that reads a site's `site/` folder, plugins included) recognises it as an external script. The markup itself is unchanged.
+
 ## [1.0.1] — 2026-11-09
 
 ### Fixed

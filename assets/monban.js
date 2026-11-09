@@ -2,7 +2,7 @@
  * Monban: loads the ALTCHA widget, registers its workers and, when the page
  * asks for them, the German labels. Kirby serves every plugin asset under a
  * folder of its own, so the script gets the URLs as data attributes of its
- * own <script> tag instead of relative imports. Workers are files, not blob:
+ * own script tag instead of relative imports. Workers are files, not blob:
  * URLs, so a Content Security Policy with worker-src 'self' is enough.
  * Nothing here talks to a foreign host.
  */

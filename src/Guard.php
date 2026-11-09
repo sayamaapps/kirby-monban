@@ -145,9 +145,8 @@ class Guard
 			// Kirby serves every asset under a folder of its own, so the script
 			// cannot import its neighbours by relative path: the URLs travel with it.
 			$language = Options::language($kirby);
-			$html .= '<script ' . Html::attr([
-				'type' => 'module',
-				'src' => $script,
+			// `src` written out, so a static check for embedded scripts sees it.
+			$html .= '<script src="' . Html::encode($script) . '" type="module" ' . Html::attr([
 				'data-monban-altcha' => self::assetUrl($kirby, 'altcha.js'),
 				'data-monban-pbkdf2' => self::assetUrl($kirby, 'workers/pbkdf2.js'),
 				'data-monban-sha' => self::assetUrl($kirby, 'workers/sha.js'),
