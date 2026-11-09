@@ -118,7 +118,8 @@ class Guard
 	/**
 	 * The <link> tags and the <script> for the widget, once per page: the first
 	 * call prints them, later ones print nothing. External files only, so a
-	 * Content Security Policy needs no 'unsafe-inline'. `style` or `script`
+	 * Content Security Policy needs no 'unsafe-inline'. The script tag carries
+	 * the URLs of the widget, the workers and the labels as data attributes. `style` or `script`
 	 * set to false leave the tag out for sites that bundle the file themselves.
 	 */
 	public static function tags(App $kirby): string
@@ -141,7 +142,17 @@ class Guard
 		}
 		$script = self::assetUrl($kirby, 'monban.js');
 		if (Options::get($kirby, 'script', true) !== false && $script !== null) {
-			$html .= '<script type="module" src="' . Html::encode($script) . '" data-monban-language="' . Html::encode(Options::language($kirby) ?? '') . '"></script>';
+			// Kirby serves every asset under a folder of its own, so the script
+			// cannot import its neighbours by relative path: the URLs travel with it.
+			$language = Options::language($kirby);
+			$html .= '<script ' . Html::attr([
+				'type' => 'module',
+				'src' => $script,
+				'data-monban-altcha' => self::assetUrl($kirby, 'altcha.js'),
+				'data-monban-pbkdf2' => self::assetUrl($kirby, 'workers/pbkdf2.js'),
+				'data-monban-sha' => self::assetUrl($kirby, 'workers/sha.js'),
+				'data-monban-i18n' => $language === null ? null : self::assetUrl($kirby, 'i18n/' . $language . '.js'),
+			]) . '></script>';
 		}
 		return $html;
 	}

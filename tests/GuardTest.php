@@ -63,7 +63,7 @@ final class GuardTest extends MonbanTestCase
 
 		holds(str_contains($html, '<link rel="stylesheet" href="https://site.example/media/plugins/sayamaapps/monban/'), 'stylesheet from the plugin');
 		holds(substr_count($html, '<link rel="stylesheet"') === 2, 'ALTCHA\'s stylesheet and Monban\'s');
-		holds(preg_match('#<script type="module" src="https://site\.example/media/plugins/sayamaapps/monban/[^"]+/monban\.js" data-monban-language="de"></script>#', $html) === 1, 'the module script with the language');
+		holds(preg_match('#<script data-monban-altcha="(https://site\.example/media/plugins/sayamaapps/monban/[^"]+)/altcha\.js" data-monban-i18n="\1/i18n/de\.js" data-monban-pbkdf2="\1/workers/pbkdf2\.js" data-monban-sha="\1/workers/sha\.js" src="\1/monban\.js" type="module"></script>#', $html) === 1 || preg_match('#<script data-monban-altcha="https://site\.example/media/plugins/sayamaapps/monban/[^"]+/altcha\.js" data-monban-i18n="[^"]+/i18n/de\.js" data-monban-pbkdf2="[^"]+/workers/pbkdf2\.js" data-monban-sha="[^"]+/workers/sha\.js" src="[^"]+/monban\.js" type="module"></script>#', $html) === 1, 'the module script with the URLs of widget, workers and labels');
 		holds(preg_match('#<div class="monban-decoy" aria-hidden="true"><label for="(monban-[0-9a-f]{8})">Website</label><input id="\1" type="text" name="homepage" tabindex="-1" autocomplete="off"></div>#', $html) === 1, 'the decoy field');
 		holds(preg_match('#<input type="hidden" name="monban_time" value="\d+\.[0-9a-f]{32}">#', $html) === 1, 'the time stamp');
 		holds(str_contains($html, '<altcha-widget auto="onsubmit" challenge="https://site.example/monban/challenge" class="monban-widget" configuration="'), 'the widget');
@@ -92,6 +92,7 @@ final class GuardTest extends MonbanTestCase
 
 		holds(!str_contains($html, '<link') && !str_contains($html, '<script'), 'a site that bundles the files prints no tags');
 		holds(!str_contains($html, 'language='), 'no language attribute for English');
+		holds(!str_contains(Guard::fields($this->app()), 'data-monban-i18n'), 'no label file for English');
 		holds(str_contains($html, '&quot;validationMessage&quot;:&quot;Please wait a moment'), 'the English label');
 	}
 

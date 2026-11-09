@@ -10,6 +10,12 @@ All notable changes to this project are documented here. Versions follow
 - **A change to the bundled ALTCHA widget** is listed under "Widget" with its
   version.
 
+## [1.0.1] — 2026-11-09
+
+### Fixed
+
+- The widget never loaded: Kirby serves every plugin asset under a hashed folder of its own, so `monban.js` could not import `altcha.js` and the workers by relative path. The script tag now carries their URLs as `data-monban-*` attributes.
+
 ## [1.0.0] — 2026-11-09
 
 ### Added
