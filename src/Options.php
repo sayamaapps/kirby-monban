@@ -126,6 +126,8 @@ class Options
 	 * request that cannot get the lock in time signs with a secret of its own
 	 * that is not kept, so what it signed does not verify later: it is turned
 	 * away like the other steps, and no second secret ever replaces the kept one.
+	 * On such a timeout the visitor's form renders but the submit is rejected,
+	 * and a retry works.
 	 *
 	 * @throws LogicException when neither a secret is configured nor the cache can keep one
 	 */

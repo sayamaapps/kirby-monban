@@ -7,6 +7,7 @@ use AltchaOrg\Altcha\SolveChallengeOptions;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Sayamaapps\Monban\Guard;
 use Sayamaapps\Monban\Lock;
+use Sayamaapps\Monban\Options;
 use Sayamaapps\Monban\Puzzle;
 
 /**
@@ -16,6 +17,7 @@ use Sayamaapps\Monban\Puzzle;
  */
 #[CoversClass(Lock::class)]
 #[CoversClass(Guard::class)]
+#[CoversClass(Options::class)]
 #[CoversClass(Puzzle::class)]
 final class LockTest extends MonbanTestCase
 {
@@ -42,6 +44,26 @@ final class LockTest extends MonbanTestCase
 		Lock::$wait = 2.0;
 
 		parent::tearDown();
+	}
+
+	public function testGeneratedSecretIsNotKeptWhenTheLockStaysTaken(): void
+	{
+		$kirby = $this->app(['sayamaapps.monban.secret' => null]);
+		Lock::$wait = 0.1;
+		Lock::run($kirby, static fn (): bool => true, false); // creates the lock file
+		$other = $this->hold();
+
+		$first = Options::secret($kirby);
+		$second = Options::secret($kirby);
+
+		holds(preg_match('/^[0-9a-f]{64}$/', $first) === 1 && preg_match('/^[0-9a-f]{64}$/', $second) === 1, 'a secret of 64 hex characters');
+		holds($first !== $second, 'a secret of its own for each request');
+		expect(null, $kirby->cache(Options::CACHE)->get('secret'), 'nothing is kept, so no kept secret is replaced');
+
+		flock($other, LOCK_UN);
+		fclose($other);
+		$kept = Options::secret($kirby);
+		expect($kept, $kirby->cache(Options::CACHE)->get('secret'), 'with the lock free again the first request keeps one');
 	}
 
 	public function testHeldWhileTheCallbackRunsAndReleasedAfterwards(): void
