@@ -17,7 +17,10 @@ use Throwable;
  *
  * The challenge expires (option `expires`), and each one counts only once:
  * the signature of a verified challenge is kept in the plugin's cache until it
- * would have expired anyway.
+ * would have expired anyway. Looking up and keeping the signature happen under
+ * a lock (Lock), so parallel requests cannot all use the same challenge. An
+ * answer that cannot get the lock in time is rejected as invalid; the challenge
+ * stays unused.
  *
  * @package   Kirby Monban
  * @author    Simon Räder
@@ -70,7 +73,8 @@ class Puzzle
 
 	/**
 	 * Checks the widget's answer. Returns Guard::OK, or Guard::MISSING (no
-	 * answer), Guard::EXPIRED, Guard::REPLAY (seen before) or Guard::INVALID.
+	 * answer), Guard::EXPIRED, Guard::REPLAY (seen before) or Guard::INVALID (also when the
+	 * lock around the used challenges stayed taken, see Lock).
 	 */
 	public static function verify(App $kirby, string $payload): string
 	{
@@ -95,10 +99,13 @@ class Puzzle
 		$signature = (string)(json_decode((string)base64_decode(trim($payload), true), true)['challenge']['signature'] ?? '');
 		$cache = $kirby->cache(Options::CACHE);
 		$key = 'seen-' . hash('sha256', $signature);
-		if ($cache->get($key) !== null) {
-			return Guard::REPLAY;
-		}
-		$cache->set($key, time(), (int)ceil(Options::expires($kirby) / 60) + 1);
-		return Guard::OK;
+		// Look and mark in one step, or parallel requests all see "not used yet".
+		return Lock::run($kirby, static function () use ($kirby, $cache, $key): string {
+			if ($cache->get($key) !== null) {
+				return Guard::REPLAY;
+			}
+			$cache->set($key, time(), (int)ceil(Options::expires($kirby) / 60) + 1);
+			return Guard::OK;
+		}, Guard::INVALID);
 	}
 }

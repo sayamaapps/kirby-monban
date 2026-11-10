@@ -175,17 +175,23 @@ class Guard
 	 * while fewer than `$max` attempts fell into the window of `$minutes`. The
 	 * window starts again with every attempt. The key is hashed before it is
 	 * stored, so an e-mail address or an IP never lands in the cache as text.
+	 * Reading and raising the count run under a lock (Lock), so parallel
+	 * attempts cannot exceed `$max`. An attempt that cannot get the lock in time
+	 * is not allowed.
 	 */
 	public static function throttle(App $kirby, string $key, int $max, int $minutes): bool
 	{
 		$cache = $kirby->cache(Options::CACHE);
 		$name = 'throttle-' . hash('sha256', $key);
-		$count = (int)$cache->get($name, 0);
-		if ($count >= $max) {
-			return false;
-		}
-		$cache->set($name, $count + 1, max(1, $minutes));
-		return true;
+		// Count and compare in one step, or parallel requests all read the old count.
+		return Lock::run($kirby, static function () use ($cache, $name, $max, $minutes): bool {
+			$count = (int)$cache->get($name, 0);
+			if ($count >= $max) {
+				return false;
+			}
+			$cache->set($name, $count + 1, max(1, $minutes));
+			return true;
+		}, false);
 	}
 
 	/**
