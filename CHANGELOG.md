@@ -10,7 +10,7 @@ All notable changes to this project are documented here. Versions follow
 - **A change to the bundled ALTCHA widget** is listed under "Widget" with its
   version.
 
-## Unreleased
+## [1.0.4] — 2026-11-10
 
 ### Fixed
 
