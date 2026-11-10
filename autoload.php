@@ -8,6 +8,7 @@
 
 return [
 	'sayamaapps\\monban\\guard' => 'src/Guard.php',
+	'sayamaapps\\monban\\lock' => 'src/Lock.php',
 	'sayamaapps\\monban\\options' => 'src/Options.php',
 	'sayamaapps\\monban\\puzzle' => 'src/Puzzle.php',
 ];

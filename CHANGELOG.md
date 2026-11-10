@@ -10,6 +10,12 @@ All notable changes to this project are documented here. Versions follow
 - **A change to the bundled ALTCHA widget** is listed under "Widget" with its
   version.
 
+## Unreleased
+
+### Fixed
+
+- Parallel requests could undermine the replay protection and the throttle: both read a value from the cache, decided and then wrote it back, so requests that arrived together all saw the old state. One challenge could be accepted several times, and `Guard::throttle()` could let through more attempts than its limit. Reading and writing now happen under an exclusive file lock in the cache folder (`Lock`), released when the step ends and by the system if the process dies. The lock covers the requests of one server.
+
 ## [1.0.3] — 2026-11-10
 
 ### Added
