@@ -86,6 +86,18 @@ final class GuardTest extends MonbanTestCase
 		expect(Guard::TOO_OLD, Guard::timeCheck($kirby, $token, 1061), 'after the maximum');
 	}
 
+	public function testScriptAttributesForAnOwnTag(): void
+	{
+		$attributes = Guard::scriptAttributes($this->app(['sayamaapps.monban.language' => 'de']));
+
+		expect(['src', 'type', 'data-monban-altcha', 'data-monban-pbkdf2', 'data-monban-sha', 'data-monban-i18n'], array_keys($attributes), 'the attributes a site prints itself');
+		expect('module', $attributes['type'], 'a module script');
+		foreach (['src' => 'monban.js', 'data-monban-altcha' => 'altcha.js', 'data-monban-pbkdf2' => 'workers/pbkdf2.js', 'data-monban-sha' => 'workers/sha.js', 'data-monban-i18n' => 'i18n/de.js'] as $name => $file) {
+			holds(is_string($attributes[$name]) && str_starts_with($attributes[$name], 'https://site.example/media/plugins/sayamaapps/monban/') && str_ends_with($attributes[$name], '/' . $file), $name . ' is the URL of ' . $file);
+		}
+		expect(null, Guard::scriptAttributes($this->app())['data-monban-i18n'], 'no labels file for English');
+	}
+
 	public function testTagsCanBeLeftOut(): void
 	{
 		$html = Guard::fields($this->app(['sayamaapps.monban.style' => false, 'sayamaapps.monban.script' => false]));

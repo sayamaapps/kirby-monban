@@ -10,17 +10,32 @@ All notable changes to this project are documented here. Versions follow
 - **A change to the bundled ALTCHA widget** is listed under "Widget" with its
   version.
 
+## [1.0.3] — 2026-11-10
+
+### Added
+
+- `Guard::scriptAttributes()`: the attributes of the script tag, for a site that prints the tag itself (`script` set to `false`). Since 1.0.1 such a site got no widget, because the script reads its URLs from its own tag; the README says so now.
+
+### Fixed
+
+- A failed load of the widget or the labels is reported in the console instead of ending as an unhandled promise rejection; a missing labels file leaves the widget working in English.
+- The release checks run the same static check the sites run (`genba-precheck` over a scratch site with the plugin) instead of a line-based grep that was stricter in one place and blind in another.
+
+### Docs
+
+- 1.0.1 replaced the attribute `data-monban-language` with `data-monban-i18n`; 1.0.2 changed the order of the attributes (`src` first). The DOM is the same; only a test that compares the markup as text notices.
+
 ## [1.0.2] — 2026-11-09
 
 ### Fixed
 
-- The script tag writes `src` out in the PHP source, so a static check for embedded scripts (one that reads a site's `site/` folder, plugins included) recognises it as an external script. The markup itself is unchanged.
+- The script tag writes `src` out in the PHP source, so a static check for embedded scripts (one that reads a site's `site/` folder, plugins included) recognises it as an external script. The attributes are the same, `src` now comes first.
 
 ## [1.0.1] — 2026-11-09
 
 ### Fixed
 
-- The widget never loaded: Kirby serves every plugin asset under a hashed folder of its own, so `monban.js` could not import `altcha.js` and the workers by relative path. The script tag now carries their URLs as `data-monban-*` attributes.
+- The widget never loaded: Kirby serves every plugin asset under a hashed folder of its own, so `monban.js` could not import `altcha.js` and the workers by relative path. The script tag now carries their URLs as `data-monban-*` attributes (`data-monban-altcha`, `-pbkdf2`, `-sha`, `-i18n`); `data-monban-language` is gone.
 
 ## [1.0.0] — 2026-11-09
 
