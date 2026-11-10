@@ -39,6 +39,7 @@
         "maglnet/composer-require-checker": "4.17.0",
         "phpmd/phpmd": "2.15.0",
         "phpunit/phpunit": "11.5.55",
+        "sayamaapps/kirby-genba": "^1.9",
         "vimeo/psalm": "6.20.1"
     },
     "config": {
@@ -57,10 +58,12 @@
         "kirby": {
             "compatible": "^5.0"
         },
-        "kirby-cms-path": false
+        "kirby-cms-path": false,
+        "kirby-plugin-path": "vendor/plugins"
     },
     "scripts": {
         "analyze:phpmd": "vendor/bin/phpmd src,index.php,autoload.php github phpmd.xml.dist",
+        "analyze:precheck": "bash scripts/precheck.sh",
         "analyze:psalm": "vendor/bin/psalm",
         "analyze:require-checker": "vendor/bin/composer-require-checker check --config-file=.github/composer-require-checker.json composer.json",
         "analyze:unused": "vendor/bin/composer-unused --configuration=.github/composer-unused.php",
@@ -72,6 +75,7 @@
             "@composer check-platform-reqs",
             "@analyze:psalm",
             "@analyze:phpmd",
+            "@analyze:precheck",
             "@test"
         ],
         "normalize:check": "@composer normalize --dry-run",

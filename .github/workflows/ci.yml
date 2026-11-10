@@ -97,6 +97,10 @@ jobs:
       - name: PHP Mess Detector
         run: composer analyze:phpmd
 
+      # The static check the sites run on their site/ folder (Genba), over a scratch site with this plugin.
+      - name: Site precheck (Genba)
+        run: composer analyze:precheck
+
   style:
     name: Code style, PHP 8.4
     runs-on: ubuntu-latest
@@ -175,13 +179,6 @@ jobs:
           fi
           if grep -nE '\.style\.|setAttribute\((["'"'"'])style\1|style=' assets/monban.js; then
             echo "::error::monban.js must not set inline styles (CSP: style-src self)"; exit 1
-          fi
-
-      # Static checks of sites read src/ too: every script tag must show its src, no <script in comments.
-      - name: Every script tag names its src
-        run: |
-          if grep -n '<script' src/*.php assets/monban.js | grep -v '<script src='; then
-            echo "::error::a script tag without a visible src attribute"; exit 1
           fi
 
       # The ALTCHA build in assets/ must be the external one: styles and workers as files, nothing injected.

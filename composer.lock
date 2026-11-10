@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "87325d2fdf9125a3bfba3fad45fd67f9",
+    "content-hash": "37ce1bc08c6ad58bc284ddbdf92b382f",
     "packages": [
         {
             "name": "altcha-org/altcha",
@@ -4774,6 +4774,84 @@
                 "source": "https://github.com/revoltphp/event-loop/tree/v1.0.9"
             },
             "time": "2026-05-16T17:55:38+00:00"
+        },
+        {
+            "name": "sayamaapps/kirby-genba",
+            "version": "v1.9.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sayamaapps/kirby-genba.git",
+                "reference": "f31398a938ee126820b7b3b45779ae3673492d44"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sayamaapps/kirby-genba/zipball/f31398a938ee126820b7b3b45779ae3673492d44",
+                "reference": "f31398a938ee126820b7b3b45779ae3673492d44",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ctype": "*",
+                "ext-curl": "*",
+                "ext-dom": "*",
+                "ext-filter": "*",
+                "ext-json": "*",
+                "ext-libxml": "*",
+                "ext-mbstring": "*",
+                "ext-tokenizer": "*",
+                "getkirby/composer-installer": "^1.2",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "ergebnis/composer-normalize": "^2.54",
+                "getkirby/cms": "^5.0",
+                "icanhazstring/composer-unused": "^0.9.7",
+                "maglnet/composer-require-checker": "^4.0",
+                "phpmd/phpmd": "^2.15",
+                "phpunit/phpunit": "11.5.55",
+                "vimeo/psalm": "^6.20"
+            },
+            "bin": [
+                "bin/genba-links",
+                "bin/genba-precheck",
+                "bin/genba-preflight",
+                "bin/genba-smoke",
+                "bin/genba-stamp"
+            ],
+            "type": "kirby-plugin",
+            "extra": {
+                "kirby": {
+                    "compatible": "^5.0"
+                },
+                "installer-name": "genba",
+                "kirby-cms-path": false
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Simon Räder",
+                    "homepage": "https://sayamaapps.de"
+                }
+            ],
+            "description": "Build stamp, pre-deploy checks, smoke test and link check for deployed Kirby CMS sites.",
+            "homepage": "https://github.com/sayamaapps/kirby-genba",
+            "keywords": [
+                "ci",
+                "deployment",
+                "kirby",
+                "kirby-5",
+                "kirby-plugin",
+                "link-check",
+                "operations",
+                "smoke-test"
+            ],
+            "support": {
+                "issues": "https://github.com/sayamaapps/kirby-genba/issues",
+                "source": "https://github.com/sayamaapps/kirby-genba"
+            },
+            "time": "2026-11-03T16:56:03+00:00"
         },
         {
             "name": "sebastian/cli-parser",

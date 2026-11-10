@@ -109,6 +109,28 @@ class Guard
 		return $html;
 	}
 
+	/**
+	 * The attributes of the script tag: `src` (monban.js), `type` and the URLs
+	 * of the widget, the workers and the labels as `data-monban-*`. Kirby serves
+	 * every asset under a folder of its own, so the script cannot import its
+	 * neighbours by relative path: the URLs travel with the tag. A site that
+	 * prints the tag itself (`script` set to false) prints these attributes.
+	 *
+	 * @return array<string, string|null> attribute => value; `data-monban-i18n` is null for English
+	 */
+	public static function scriptAttributes(App $kirby): array
+	{
+		$language = Options::language($kirby);
+		return [
+			'src' => self::assetUrl($kirby, 'monban.js'),
+			'type' => 'module',
+			'data-monban-altcha' => self::assetUrl($kirby, 'altcha.js'),
+			'data-monban-pbkdf2' => self::assetUrl($kirby, 'workers/pbkdf2.js'),
+			'data-monban-sha' => self::assetUrl($kirby, 'workers/sha.js'),
+			'data-monban-i18n' => $language === null ? null : self::assetUrl($kirby, 'i18n/' . $language . '.js'),
+		];
+	}
+
 	/** HMAC of a time stamp with the site's secret, 32 hex characters. */
 	private static function sign(App $kirby, string $time): string
 	{
@@ -118,9 +140,9 @@ class Guard
 	/**
 	 * The <link> tags and the script tag for the widget, once per page: the first
 	 * call prints them, later ones print nothing. External files only, so a
-	 * Content Security Policy needs no 'unsafe-inline'. The script tag carries
-	 * the URLs of the widget, the workers and the labels as data attributes. `style` or `script`
-	 * set to false leave the tag out for sites that bundle the file themselves.
+	 * Content Security Policy needs no 'unsafe-inline'. `style` set to false
+	 * leaves the <link> tags out, `script` set to false the script tag; the site
+	 * then prints a tag with scriptAttributes() itself.
 	 */
 	public static function tags(App $kirby): string
 	{
@@ -140,18 +162,10 @@ class Guard
 				}
 			}
 		}
-		$script = self::assetUrl($kirby, 'monban.js');
-		if (Options::get($kirby, 'script', true) !== false && $script !== null) {
-			// Kirby serves every asset under a folder of its own, so the script
-			// cannot import its neighbours by relative path: the URLs travel with it.
-			$language = Options::language($kirby);
+		$attributes = self::scriptAttributes($kirby);
+		if (Options::get($kirby, 'script', true) !== false && $attributes['src'] !== null) {
 			// `src` written out, so a static check for embedded scripts sees it.
-			$html .= '<script src="' . Html::encode($script) . '" type="module" ' . Html::attr([
-				'data-monban-altcha' => self::assetUrl($kirby, 'altcha.js'),
-				'data-monban-pbkdf2' => self::assetUrl($kirby, 'workers/pbkdf2.js'),
-				'data-monban-sha' => self::assetUrl($kirby, 'workers/sha.js'),
-				'data-monban-i18n' => $language === null ? null : self::assetUrl($kirby, 'i18n/' . $language . '.js'),
-			]) . '></script>';
+			$html .= '<script src="' . Html::encode($attributes['src']) . '" type="module" ' . Html::attr(array_diff_key($attributes, ['src' => 1, 'type' => 1])) . '></script>';
 		}
 		return $html;
 	}

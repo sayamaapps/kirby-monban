@@ -109,8 +109,8 @@ Every option is `sayamaapps.monban.<name>`, written flat in `site/config/config.
 | `maximum` | `86400` | Seconds a form may stay open. |
 | `honeypot` | `'website'` | Name of the decoy field. Change it when your form has a real field of that name. |
 | `language` | request, default language, `locale`, then English | Labels, `en` or `de`. |
-| `style` | `true` | `false` omits the `<link>` tags, for sites that bundle the stylesheets. |
-| `script` | `true` | `false` omits the `<script>`, for sites that bundle the script. |
+| `style` | `true` | `false` omits the `<link>` tags, for sites that serve the stylesheets themselves. |
+| `script` | `true` | `false` omits the script tag; the site prints its own with `Guard::scriptAttributes()` (see Own script tag). |
 
 Example:
 
@@ -120,6 +120,14 @@ return [
     'sayamaapps.monban.language' => 'de',
     'sayamaapps.monban.honeypot' => 'homepage',
 ];
+```
+
+### Own script tag
+
+`snippet('monban')` prints the stylesheet and script tags with the first form on a page. A site that prints them in `<head>` calls `Guard::tags()` there. A site that wants to write the script tag itself sets `sayamaapps.monban.script` to `false` and prints the attributes of `Guard::scriptAttributes()`: `src` (monban.js), `type` and the `data-monban-*` URLs of the widget, the workers and the labels. Without those attributes the script loads nothing and says so in the console. The files cannot be bundled: Kirby serves each one under a folder of its own, and the script imports them by these URLs.
+
+```php
+<script <?= Html::attr(Sayamaapps\Monban\Guard::scriptAttributes(kirby())) ?>></script>
 ```
 
 ### Difficulty
