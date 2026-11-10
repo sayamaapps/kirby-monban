@@ -112,6 +112,8 @@ Every option is `sayamaapps.monban.<name>`, written flat in `site/config/config.
 | `style` | `true` | `false` omits the `<link>` tags, for sites that serve the stylesheets themselves. |
 | `script` | `true` | `false` omits the script tag; the site prints its own with `Guard::scriptAttributes()` (see Own script tag). |
 
+Replay protection and throttle take an exclusive file lock in the cache folder, so parallel requests on one server cannot all pass the same check. The lock protects **one server only**: with a cache shared across several servers (memcached, Redis, APCu), parallel requests on different servers are not serialized. A request that cannot get the lock within two seconds is turned away: `throttle()` returns `false`, and the answer counts as `Guard::INVALID` (the challenge stays unused).
+
 Example:
 
 ```php

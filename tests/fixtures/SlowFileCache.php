@@ -13,7 +13,7 @@ final class SlowFileCache extends FileCache
 	public function retrieve(string $key): Value|null
 	{
 		$value = parent::retrieve($key);
-		usleep(200_000);
+		usleep(50_000);
 		return $value;
 	}
 }

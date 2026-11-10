@@ -14,7 +14,7 @@ All notable changes to this project are documented here. Versions follow
 
 ### Fixed
 
-- Parallel requests could undermine the replay protection and the throttle: both read a value from the cache, decided and then wrote it back, so requests that arrived together all saw the old state. One challenge could be accepted several times, and `Guard::throttle()` could let through more attempts than its limit. Reading and writing now happen under an exclusive file lock in the cache folder (`Lock`), released when the step ends and by the system if the process dies. The lock covers the requests of one server.
+- Parallel requests could undermine the replay protection and the throttle: both read a value from the cache, decided and then wrote it back, so requests that arrived together all saw the old state. One challenge could be accepted several times, and `Guard::throttle()` could let through more attempts than its limit. Reading and writing now happen under an exclusive file lock in the cache folder (`Lock`), released when the step ends and by the system if the process dies. The lock covers the requests of one server. A request that cannot get the lock within two seconds (a flood, a stuck process) is turned away instead of running unlocked: `Guard::throttle()` returns `false`, `Puzzle::verify()` returns `Guard::INVALID` and leaves the challenge unused. Where no lock is possible (cache off, lock file cannot be opened, cache folder not writable) the step runs without one, as before.
 
 ## [1.0.3] — 2026-11-10
 

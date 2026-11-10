@@ -76,17 +76,17 @@ final class ConcurrencyTest extends MonbanTestCase
 		return $results;
 	}
 
-	public function testParallelRequestsUseAChallengeOnlyOnce(): void
-	{
-		$results = $this->race('replay', $this->answer());
-
-		expect([Guard::OK, ...array_fill(0, self::PROCESSES - 1, Guard::REPLAY)], $results, 'exactly one of the parallel answers counts');
-	}
-
 	public function testParallelRequestsStayWithinTheLimit(): void
 	{
 		$results = $this->race('throttle');
 
 		expect(['allowed', 'allowed', 'allowed', ...array_fill(0, self::PROCESSES - 3, 'blocked')], $results, 'no more attempts than the limit allows');
+	}
+
+	public function testParallelRequestsUseAChallengeOnlyOnce(): void
+	{
+		$results = $this->race('replay', $this->answer());
+
+		expect([Guard::OK, ...array_fill(0, self::PROCESSES - 1, Guard::REPLAY)], $results, 'exactly one of the parallel answers counts');
 	}
 }
