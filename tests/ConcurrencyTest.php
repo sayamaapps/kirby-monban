@@ -6,6 +6,7 @@ use AltchaOrg\Altcha\Payload;
 use AltchaOrg\Altcha\SolveChallengeOptions;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Sayamaapps\Monban\Guard;
+use Sayamaapps\Monban\Options;
 use Sayamaapps\Monban\Puzzle;
 
 /**
@@ -15,9 +16,11 @@ use Sayamaapps\Monban\Puzzle;
  * over one site, released together by a start file; the cache of the site is
  * slow after each read (tests/fixtures/SlowFileCache.php), so every process
  * has read before any process writes unless the check and the write are one
- * step.
+ * step. Without a configured secret, the first requests all find no secret
+ * and must still end up with one and the same.
  */
 #[CoversClass(Guard::class)]
+#[CoversClass(Options::class)]
 #[CoversClass(Puzzle::class)]
 final class ConcurrencyTest extends MonbanTestCase
 {
@@ -74,6 +77,15 @@ final class ConcurrencyTest extends MonbanTestCase
 		}
 		sort($results);
 		return $results;
+	}
+
+	public function testParallelFirstRequestsShareOneGeneratedSecret(): void
+	{
+		$results = $this->race('secret');
+
+		$stored = $this->app(['sayamaapps.monban.secret' => null])->cache(Options::CACHE)->get('secret');
+		holds(is_string($stored) && preg_match('/^[0-9a-f]{64}$/', $stored) === 1, 'a secret is stored');
+		expect(array_fill(0, self::PROCESSES, $stored), $results, 'every first request signs with the stored secret');
 	}
 
 	public function testParallelRequestsStayWithinTheLimit(): void

@@ -121,7 +121,11 @@ class Options
 
 	/**
 	 * The secret that signs challenges and time stamps: the option `secret`, or a
-	 * generated one kept in the plugin's cache.
+	 * generated one kept in the plugin's cache. The first request creates it
+	 * under the lock of `Lock`; requests that arrive together read that one. A
+	 * request that cannot get the lock in time signs with a secret of its own
+	 * that is not kept, so what it signed does not verify later: it is turned
+	 * away like the other steps, and no second secret ever replaces the kept one.
 	 *
 	 * @throws LogicException when neither a secret is configured nor the cache can keep one
 	 */
@@ -138,11 +142,19 @@ class Options
 			return $kept;
 		}
 
-		$generated = bin2hex(random_bytes(32));
-		$cache->set('secret', $generated, 0);
-		if ($cache->get('secret') !== $generated) {
-			throw new LogicException('Monban needs a secret: set sayamaapps.monban.secret (32 characters or more) or keep sayamaapps.monban.cache on.');
-		}
-		return $generated;
+		// The first request creates the secret; requests that arrive together wait for the lock and read it.
+		return Lock::run($kirby, static function () use ($cache): string {
+			$kept = $cache->get('secret');
+			if (is_string($kept) && strlen($kept) >= self::SECRET_MIN) {
+				return $kept;
+			}
+
+			$generated = bin2hex(random_bytes(32));
+			$cache->set('secret', $generated, 0);
+			if ($cache->get('secret') !== $generated) {
+				throw new LogicException('Monban needs a secret: set sayamaapps.monban.secret (32 characters or more) or keep sayamaapps.monban.cache on.');
+			}
+			return $generated;
+		}, bin2hex(random_bytes(32)));
 	}
 }
