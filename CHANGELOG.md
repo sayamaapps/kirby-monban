@@ -10,6 +10,13 @@ All notable changes to this project are documented here. Versions follow
 - **A change to the bundled ALTCHA widget** is listed under "Widget" with its
   version.
 
+## [Unreleased]
+
+### Added
+
+- Kirby 6 is supported next to Kirby 5 (`getkirby/cms` `^5.0 || ^6.0`). Kirby 6 itself
+  needs PHP 8.3 or newer; the plugin still runs on PHP 8.2 with Kirby 5.
+
 ## [1.0.4] — 2026-11-10
 
 ### Fixed
