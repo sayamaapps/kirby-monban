@@ -1,8 +1,8 @@
 # Monban
 
-Spam protection for forms in [Kirby CMS](https://getkirby.com) 5: a proof of work the browser solves on its own, a decoy field, a time check and a throttle, all served from your own server.
+Spam protection for forms in [Kirby CMS](https://getkirby.com) 5 and 6: a proof of work the browser solves on its own, a decoy field, a time check and a throttle, all served from your own server.
 
-**Versions:** Kirby 5 · PHP 8.2 to 8.5 · MIT · [Changes](CHANGELOG.md)
+**Versions:** Kirby 5 and 6 · PHP 8.2 to 8.5 · MIT · [Changes](CHANGELOG.md)
 
 Monban (門番, the gatekeeper) stands in front of a form. A visitor notices nothing: no puzzle, no checkbox, no pictures of buses. The browser does a short calculation when the form is sent ([ALTCHA](https://altcha.org), proof of work), and the server checks the answer in a fraction of a millisecond. A script that posts straight to your endpoint, fills every field it finds or sends within a second is refused before your code runs. Nothing is loaded from a third party, nothing is stored in the visitor's browser.
 
@@ -18,7 +18,7 @@ Monban (門番, the gatekeeper) stands in front of a form. A visitor notices not
 
 ## Requirements
 
-- Kirby 5 (`getkirby/cms` 5.0 or newer)
+- Kirby 5 or 6 (`getkirby/cms` `^5.0 || ^6.0`); Kirby 6 needs PHP 8.3 or newer
 - PHP 8.2, 8.3, 8.4 or 8.5
 - Composer: the plugin depends on `altcha-org/altcha` (PHP). A ZIP install has no verifier.
 - A browser with Web Workers and `crypto.subtle` (every current browser). Without JavaScript, the form is refused with `Guard::MISSING`; say so in your form (see Usage).
